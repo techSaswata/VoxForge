@@ -9,6 +9,11 @@ import { createClient } from '@/lib/supabase/client';
 const getErrorMessage = (err: unknown, fallback: string) =>
     err instanceof Error ? err.message : fallback;
 
+const getAuthCallbackUrl = (redirectTo: string) => {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    return `${siteUrl.replace(/\/$/, '')}/auth/callback?redirect=${redirectTo}`;
+};
+
 export default function LoginPage() {
     return (
         <Suspense fallback={<div className="min-h-screen bg-[#0a0a0b]" />}>
@@ -59,7 +64,7 @@ function LoginContent() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/auth/callback?redirect=${redirectTo}`,
+                    redirectTo: getAuthCallbackUrl(redirectTo),
                 },
             });
 

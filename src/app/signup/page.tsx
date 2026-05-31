@@ -9,6 +9,11 @@ import { createClient } from '@/lib/supabase/client';
 const getErrorMessage = (err: unknown, fallback: string) =>
     err instanceof Error ? err.message : fallback;
 
+const getAuthCallbackUrl = () => {
+    const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || window.location.origin;
+    return `${siteUrl.replace(/\/$/, '')}/auth/callback?redirect=/dashboard`;
+};
+
 export default function SignupPage() {
     const router = useRouter();
 
@@ -68,7 +73,7 @@ export default function SignupPage() {
             const { error } = await supabase.auth.signInWithOAuth({
                 provider: 'google',
                 options: {
-                    redirectTo: `${window.location.origin}/auth/callback?redirect=/dashboard`,
+                    redirectTo: getAuthCallbackUrl(),
                 },
             });
 
